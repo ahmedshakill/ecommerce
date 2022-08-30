@@ -9,6 +9,7 @@ const cartRoute = require('./routes/cart');
 const orderRoute = require('./routes/order');
 const stripeRoute = require('./routes/stripe');
 const bankRoute = require('./routes/bank');
+const transactRoute = require('./routes/transact');
 const cors = require('cors');
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use('/api/carts', cartRoute);
 app.use('/api/orders', orderRoute);
 app.use('/api/checkout', stripeRoute);
 app.use('/api/bankinfo', bankRoute);
+app.use('/api/transact', transactRoute);
 app.listen(process.env.PORT || 5000, () => {
   console.log('Backend server is running!');
 });
