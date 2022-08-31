@@ -1,3 +1,6 @@
+const Bank = require('../models/Bank');
+const Order = require('../models/Order');
+const axios = require('axios').default;
 const {
   verifyToken,
   verifyTokenAndAuthorization,
@@ -5,6 +8,70 @@ const {
 } = require('./verifyToken');
 const router = require('express').Router();
 
-router.post('/', verifyToken, (req, res, next) => {});
+router.get('/', verifyToken, async (req, res, next) => {
+  const userBankInfo = await Bank.findOne({ userId: req.user.id });
+  //TODO
+  // send userbankInfo to bank org while paying for products
+  try {
+    const result = await axios.request({
+      method: req.body.method,
+      url: 'http://localhost:5454/api/balance',
+      data: {
+        accountNumber: userBankInfo.accountNumber,
+        secret: userBankInfo.secret,
+      },
+    });
+    console.log(result.data);
+    res.status(200).json(result.data);
+  } catch (err) {
+    res.status(400).json({ message: 'bank transaction error' });
+  }
+});
+
+/*
+router.post('/', verifyToken, async (req, res, next) => {
+  const userBankInfo = await Bank.findOne({ userId: req.user.id });
+  //TODO
+  // send userbankInfo to bank org while paying for products
+  try {
+    const result = await axios.request({
+      method: req.body.method,
+      url: 'http://localhost:5454/api/balance',
+      data: {
+        accountNumber: userBankInfo.accountNumber,
+        secret: userBankInfo.secret,
+        balance: req.body.balance,
+      },
+    });
+    console.log(result.data);
+    res.status(200).json(result.data);
+  } catch (err) {
+    res.status(400).json({ message: 'bank transaction error' });
+  }
+});
+*/
+
+router.delete('/', verifyToken, async (req, res, next) => {
+  const userBankInfo = await Bank.findOne({ userId: req.user.id });
+  const orderInfo = await Order.findOne({ userId: req.user.id });
+
+  //TODO
+  // send userbankInfo to bank org while paying for products
+  try {
+    const result = await axios.request({
+      method: req.body.method,
+      url: 'http://localhost:5454/api/balance',
+      data: {
+        accountNumber: userBankInfo.accountNumber,
+        secret: userBankInfo.secret,
+        balance: orderInfo.amount,
+      },
+    });
+    console.log(result.data);
+    res.status(200).json(result.data);
+  } catch (err) {
+    res.status(400).json({ message: 'bank transaction error' });
+  }
+});
 
 module.exports = router;
