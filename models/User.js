@@ -9,6 +9,14 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // cart: {
+    //   products: [
+    //     {
+    //       productId: { type: String },
+    //       quantity: { type: int },
+    //     },
+    //   ],
+    // },
   },
   { timestamps: true }
 );
