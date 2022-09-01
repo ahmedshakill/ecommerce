@@ -29,7 +29,13 @@ router.post('/', async (req, res, next) => {
     if (secret === accountInfo.secret) {
       accountInfo.balance = accountInfo.balance + balance;
     }
-    const savedAccount = await accountInfo.save();
+    const savedAccount = await Account.findOneAndUpdate(
+      {
+        accountNumber: accountNumber,
+      },
+      { balance: accountInfo.balance },
+      { new: true }
+    );
     res.status(200).json(savedAccount);
   } catch (err) {
     res.status(500).json(err);
@@ -45,7 +51,13 @@ router.delete('/', async (req, res, next) => {
     if (secret === accountInfo.secret) {
       accountInfo.balance = accountInfo.balance - balance;
     }
-    const savedAccount = await accountInfo.save();
+    const savedAccount = await Account.findOneAndUpdate(
+      {
+        accountNumber: accountNumber,
+      },
+      { balance: accountInfo.balance },
+      { new: true }
+    );
     res.status(200).json(savedAccount);
   } catch (err) {
     res.status(500).json(err);

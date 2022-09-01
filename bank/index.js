@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
 const balanceRoute = require('./routes/balance');
-// const cartRoute = require('./routes/cart');
+const transferRoute = require('./routes/transfer');
 // const orderRoute = require('./routes/order');
 // const stripeRoute = require('./routes/stripe');
 // const bankRoute = require('./routes/bank');
@@ -15,7 +15,7 @@ const cors = require('cors');
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(process.env.MONGO_URI)
   .then(() => console.log('DB Connection Successfull!'))
   .catch((err) => {
     console.log(err);
@@ -26,6 +26,7 @@ app.use(express.json());
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
 app.use('/api/balance', balanceRoute);
+app.use('/api/transfer', transferRoute);
 // app.use('/api/carts', cartRoute);
 // app.use('/api/orders', orderRoute);
 // app.use('/api/checkout', stripeRoute);

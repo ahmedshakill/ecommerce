@@ -17,6 +17,7 @@ router.post('/register', async (req, res) => {
       process.env.PASS_SEC
     ).toString(),
     accountNumber: accountNumber,
+    secret: secret,
   });
 
   try {
@@ -38,35 +39,47 @@ router.post('/register', async (req, res) => {
 //LOGIN
 
 router.post('/login', async (req, res) => {
+  // {
+  //    userName : req.body.user_name,
+  // }
   try {
-    const user = await User.findOne({
-      userName: req.body.user_name,
+    let exists = false;
+    let matched = false;
+    const users = await User.find();
+
+    users.forEach((user) => {
+      if (user.username === req.body.username) {
+        exists = true;
+        console.log(user);
+        const hashedPassword = CryptoJS.AES.decrypt(
+          user.password,
+          process.env.PASS_SEC
+        );
+        console.log('username ' + `${req.body.username}`);
+
+        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+
+        const inputPassword = req.body.password;
+        if (originalPassword === inputPassword) {
+          // res.status(401).json('Wrong Password');
+          matched = true;
+          console.log(originalPassword + ' ' + inputPassword);
+          const accessToken = jwt.sign(
+            {
+              id: user._id,
+              isAdmin: user.isAdmin,
+            },
+            process.env.JWT_SEC,
+            { expiresIn: '3d' }
+          );
+          const { password, ...others } = user._doc;
+          res.status(200).json({ ...others, accessToken });
+        }
+      }
     });
-    !user && res.status(401).json('Wrong User Name');
-    // console.log(user.password)
-    const hashedPassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.PASS_SEC
-    );
-    // console.log(`${req.body.user_name}`)
-
-    const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-
-    const inputPassword = req.body.password;
-    originalPassword != inputPassword && res.status(401).json('Wrong Password');
-
-    // console.log(originalPassword + ' ' + inputPassword)
-    const accessToken = jwt.sign(
-      {
-        id: user._id,
-        isAdmin: user.isAdmin,
-      },
-      process.env.JWT_SEC,
-      { expiresIn: '3d' }
-    );
-
-    const { password, ...others } = user._doc;
-    res.status(200).json({ ...others, accessToken });
+    if ((exists === false) | (matched === false)) {
+      res.status(401).json('Wrong credentials');
+    }
   } catch (err) {
     res.status(500).json(err);
   }
