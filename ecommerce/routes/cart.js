@@ -26,16 +26,9 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 //UPDATE
-router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   try {
     const updatedCart = await Cart.findOne({ userId: req.user.id });
-    // updatedCart.products.forEach((element) => {
-    //   products.forEach((prodNew) => {
-    //     if (element.productId === prodNew.productId) {
-    //       element.quantity = element.quantity + prodNew.quantity;
-    //     }
-    //   });
-    // });
     let contains = false;
     updatedCart.products.forEach((element) => {
       if (element.productId === req.params.id) {
@@ -43,9 +36,11 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
         contains = true;
       }
     });
-    if (!contains) {
+    console.log(contains);
+    if (contains === false) {
       updatedCart.products.push({ productId: req.params.id, quantity: 1 });
     }
+    console.log(updatedCart);
     const updatedCart2 = await Cart.findOneAndUpdate(
       { userId: req.user.id },
       {
@@ -61,7 +56,7 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
 });
 
 //DELETE
-router.delete('/:id', verifyTokenAndAuthorization, async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
   try {
     // await Cart.findByIdAndDelete(req.params.id);
     const updatedCart = await Cart.findOne({ userId: req.user.id });

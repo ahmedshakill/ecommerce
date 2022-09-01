@@ -42,6 +42,7 @@ router.post('/login', async (req, res) => {
   // {
   //    userName : req.body.user_name,
   // }
+  console.log('bank loging here');
   try {
     let exists = false;
     let matched = false;
