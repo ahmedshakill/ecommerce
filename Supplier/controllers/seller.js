@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 ///******PRODUCT DELIVERY REQUEST TO THE SELLER */
 
-exports.productDeliveryReq = async (req, res, next) => {
+exports.placeOrder = async (req, res, next) => {
   const transaction_id = req.body.transaction_id;
 
   // const products = req.body.products;
@@ -46,7 +46,7 @@ exports.productDeliveryReq = async (req, res, next) => {
   }
 };
 
-exports.addProdSeller = async (req, res, next) => {
+exports.addProd = async (req, res, next) => {
   try {
     const result = await axios.request({
       method: 'post',
